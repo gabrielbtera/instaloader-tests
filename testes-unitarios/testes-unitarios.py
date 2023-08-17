@@ -270,7 +270,7 @@ class TesteIntegracao(unittest.TestCase):
         self.L.download_profiles({self.L.check_profile_id(USUARIO_TESTE)}, posts=False, raise_errors=True)
 
     def test_public_profile_paging(self):
-        self.post_paging_test(instaloader.Profile.from_username(self.L.context, INSTAGRAM_USER).get_posts())
+        self.post_paging_test(instaloader.Profile.from_username(self.L.context, UBER_USER).get_posts())
 
 if __name__ == '__main__':
 
