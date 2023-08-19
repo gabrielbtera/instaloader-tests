@@ -1,20 +1,13 @@
 import unittest
 from unittest import mock
 
-import instaloader
 
 from instaloader.instaloader import Instaloader
 from instaloader.structures import Hashtag, Post
 
 from .mockapi import mock_api
 
-L = instaloader.Instaloader()
-posts = instaloader.Profile.from_username(L.context, "instagram").get_posts()
 
-# for post in posts:
-#     print(post.caption_hashtags)
-
-# print(posts)
 
 mockapi =  mock_api()
 
