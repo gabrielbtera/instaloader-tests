@@ -11,7 +11,7 @@ from .mockapi import mock_api
 
 mockapi =  mock_api()
 
-# execute python3 -m testes-unitarios.testes-integracao
+# execute python3 -m testes-unitarios.testes-integracaoz
 
 
 class IntegrationTests(unittest.TestCase):
