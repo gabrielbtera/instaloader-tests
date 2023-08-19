@@ -1,28 +1,28 @@
 import os
 import unittest
 import datetime
+import shutil
+import tempfile
 
+from itertools import islice
 from unittest.mock import patch
-
 from unittest import mock
 from datetime import datetime, timezone
-
 from instaloader import instaloader
-USUARIO_TESTE = 'kaell_andrade'
-WINDOS = 'Windows'
-UNIX = 'Unix'
-
-
-
-
 from instaloader.structures import Post
 from instaloader import instaloadercontext
 from instaloader.exceptions import InvalidArgumentException
-
 from instaloader.instaloadercontext import InstaloaderContext
 from instaloader.instaloader import Instaloader
 from instaloader.structures import Post, Profile
 
+USUARIO_TESTE = 'kaell_andrade'
+UBER_USER = "uber"
+WINDOS = 'Windows'
+UNIX = 'Unix'
+PAGING_MAX_COUNT = 10
+
+ratecontroller = None
 
 
 """
@@ -232,6 +232,45 @@ class TestesUnitarios(unittest.TestCase):
         del copymock['shortcode']
         post = Post(self.context, copymock)
         self.assertEqual(post.shortcode, shortcode)
+
+
+class TesteIntegracao(unittest.TestCase):
+
+    def post_paging_test(self, iterator):
+        previous_post = None
+        for post in islice(iterator, PAGING_MAX_COUNT):
+            print(post)
+            if previous_post:
+                self.assertTrue(post.date_utc < previous_post.date_utc)
+            previous_post = post
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        print("Testing in {}".format(self.dir))
+        os.chdir(self.dir)
+        self.L = instaloader.Instaloader(download_geotags=True,
+                                         download_comments=True,
+                                         save_metadata=True)
+        self.L.context.raise_all_errors = True
+        if ratecontroller is not None:
+            # pylint:disable=protected-access
+            ratecontroller._context = self.L.context
+            self.L.context._rate_controller = ratecontroller
+
+    def tearDown(self):
+        # pylint:disable=global-statement,protected-access
+        global ratecontroller
+        ratecontroller = self.L.context._rate_controller
+        self.L.close()
+        os.chdir('/')
+        print("Removing {}".format(self.dir))
+        shutil.rmtree(self.dir)
+
+    def test_profile_pic_download(self):
+        self.L.download_profiles({self.L.check_profile_id(USUARIO_TESTE)}, posts=False, raise_errors=True)
+
+    def test_public_profile_paging(self):
+        self.post_paging_test(instaloader.Profile.from_username(self.L.context, UBER_USER).get_posts())
 
 if __name__ == '__main__':
 
