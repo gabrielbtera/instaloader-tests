@@ -28,11 +28,11 @@ ratecontroller = None
 """
 Para executar esse teste, faz-se necessario estar no diretorio instaloader-tests e executar o comando:
 
-python3 -m testes-unitarios.testes-unitarios
+python3 -m testes-materia.testes-integracao
 
 para a cobertura 
 
-python -m coverage run -m unittest testes-unitarios/testes-unitarios.py
+python -m coverage run -m unittest testes-materia/testes-unitarios.py
 
 obter html 
 
